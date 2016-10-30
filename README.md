@@ -14,9 +14,9 @@ It connects with the IBM BlueMix Visual Recognition web service to get the categ
 It was our first time we tried IBM Bluemix and it consumed most of our time. But soon after understanding its structure, we started working on our project. We had multiple ideas in mind which uses bluemix to its maximum extent, but for this project we limited ourselves because of time constraints. 
 
 ##Team Members  
-Aswin Anil Kumar, NC State University
-Bhavya Bansal, NC State University
-Chris Brown, NC State University
+Aswin Anil Kumar, NC State University  
+Bhavya Bansal, NC State University  
+Chris Brown, NC State University  
 Megha Umesha, NC State University
 
 
