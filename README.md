@@ -1,4 +1,5 @@
 #BlueMix Image Sorter  
+Image sorting application built at the 2016 HackNC Hackathon
 
 ##What it does  
 This is a simple java desktop application that can organize your photo album by sorting them into categories.
