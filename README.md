@@ -12,5 +12,14 @@ It connects with the IBM BlueMix Visual Recognition web service to get the categ
 
 
 
+##Team Members  
+Aswin Anil Kumar, NC State University
+Bhavya Bansal, NC State University
+Chris Brown, NC State University
+Megha Umesha, NC State University
+
+
+
+
 
 
