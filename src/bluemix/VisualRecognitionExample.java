@@ -6,7 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,10 +44,8 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 	JButton openButton, sortButton;
     JTextArea log;
     JFileChooser fc;
-    File myFolder = null;
-	
-    
-    
+	private static File InputPath = null;
+	   
     public VisualRecognitionExample() {
     	super(new BorderLayout());
     	
@@ -78,13 +79,13 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		//Handle open button action.
         if (e.getSource() == openButton) {
-        	myFolder = null;
+        	InputPath = null;
             int returnVal = fc.showOpenDialog(VisualRecognitionExample.this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                myFolder = fc.getSelectedFile();
+            	InputPath = fc.getSelectedFile();
                 //This is where a real application would open the file.
                 log.setText("");
-                log.append("Load: " + myFolder.getAbsolutePath() + "\n");
+                log.append("Load: " + InputPath.getAbsolutePath() + "\n");
             } 
             else {
                 log.append("Open command cancelled by user.\n");
@@ -94,8 +95,8 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
         //Handle sort button action.
         } 
         if (e.getSource() == sortButton) {
-        	if(myFolder != null) {
-        		log.append("Sorting: " + myFolder.getName() + ".\n");
+        	if(InputPath != null) {
+        		log.append("Sorting: " + InputPath.getName() + ".\n");
         		//TODO BLUEMIX
         		organizePictures();
         	}
@@ -116,8 +117,6 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
         frame.setVisible(true);
 	}
     
-	private static String InputPath = "/Users/AswinAk/Desktop/BlueMixTest";
-
 	public static void main(String[] args) {
 		
 	    SwingUtilities.invokeLater(new Runnable() {
@@ -129,18 +128,21 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 	        });
 		
 	}	
+	
 	public static void organizePictures(){
 		ArrayList<String> filePaths = new ArrayList<String>();
 		ArrayList<Image> imageCollection =  new ArrayList<Image>();
 		Set<String> uniqueCategories = new HashSet<String>();
 		File file = null;
-		FileChannel inputChannel,outputChannel;
+		File input,output;
+		InputStream instream;
+		OutputStream outstream;
 		String source,dest;
 
 		VisualRecognition service = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_20);
 		service.setApiKey("9e3a667265d8ad82e2d01cf2502ede9727e74e96");
 
-		try(Stream<Path> paths = Files.walk(Paths.get(InputPath))) {
+		try(Stream<Path> paths = Files.walk(Paths.get(InputPath.getAbsolutePath()))) {
 		    paths.forEach(filePath -> {
 		        if (Files.isRegularFile(filePath)) {
 		            //System.out.println(filePath.toString());
@@ -173,30 +175,38 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 			if (!file.exists())
 				file.mkdir();
 		}
-
+		byte[] buffer = new byte[1024];
+		int length;
 		for(Image img: imageCollection){
-		     inputChannel = null;outputChannel = null;
-			 source = img.getPath();
-			 dest = InputPath+"/"+img.getCategory();
-			try {
-				inputChannel = new FileInputStream(source).getChannel();
-				outputChannel = new FileOutputStream(dest).getChannel();
-				outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
+		     input = new File(img.getPath());
+		     output = new File(InputPath+"\\"+img.getCategory());
+		     try {
+				instream = new FileInputStream(input);
+				outstream = new FileOutputStream(output);
+				 //System.out.println(source+" "+dest);
+				 while((length = instream.read(buffer)) > 0) {
+					 outstream.write(buffer, 0, length);
+				 }
+				 instream.close();
+				 outstream.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	
+			/*try {
+				input = new FileInputStream(source).getChannel();
+				output = new FileOutputStream(dest).getChannel();
+				System.out.println("test");
+				System.out.println(input.size());
+				outputChannel.transferFrom(input, 0, inputChannel.size());
 				inputChannel.close();
 				outputChannel.close();
 			} 
-			catch(Exception e){			
-			}		
+			catch(Exception e){		
+				e.printStackTrace();
+			}*/		
 		}
-		
-		
-		
 	}
-	    
-	    
-	    
-	    
-	
 }
 
 
