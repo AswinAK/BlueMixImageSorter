@@ -42,7 +42,7 @@ import org.json.simple.parser.JSONParser;
 public class VisualRecognitionExample extends JPanel implements ActionListener {
 	
 	JButton openButton, sortButton;
-    JTextArea log;
+    static JTextArea log;
     JFileChooser fc;
 	private static File InputPath = null;
 	private static String FILE_SEPARATOR;
@@ -136,7 +136,7 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 		InputStream instream;
 		OutputStream outstream;
 		String source,dest;
-
+		log.append("\nRunning complex Image processing algorithims...");;
 		VisualRecognition service = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_20);
 		service.setApiKey("9e3a667265d8ad82e2d01cf2502ede9727e74e96");
 
@@ -151,7 +151,7 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 		catch(Exception e){
 			e.printStackTrace();
 		}
-
+		log.append("\nAlmost done!...");
 		for(String path: filePaths){
 			ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
 					.images(new File(path)).build();
@@ -161,7 +161,7 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 			imageCollection.add(image);
 			uniqueCategories.add(category);
 		}
-
+		log.append("\nThe different categories are...\n"+uniqueCategories);
 		System.out.println("Set is "+uniqueCategories);
 
 		Iterator<String> setIterator  = uniqueCategories.iterator();
@@ -190,6 +190,7 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		    log.append("Done!...");
 		}
 	}
 	
@@ -203,10 +204,3 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 	        });
 	}	
 }
-
-
-
-
-
-
-
