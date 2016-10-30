@@ -131,12 +131,7 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 		File input,output;
 		InputStream instream;
 		OutputStream outstream;
-<<<<<<< HEAD
 		log.append("\nRunning complex Image processing algorithims...\n");;
-=======
-		String source,dest;
-		log.append("\nRunning complex Image processing algorithims...");;
->>>>>>> a9c854a789eb20a172cc6e8748a315de610f7f6c
 		VisualRecognition service = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_20);
 		service.setApiKey("9e3a667265d8ad82e2d01cf2502ede9727e74e96");
 
@@ -150,11 +145,7 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 		catch(Exception e){
 			e.printStackTrace();
 		}
-<<<<<<< HEAD
 		log.append("The different categories are...\n");
-=======
-		log.append("\nAlmost done!...");
->>>>>>> a9c854a789eb20a172cc6e8748a315de610f7f6c
 		for(String path: filePaths){
 			ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
 					.images(new File(path)).build();
@@ -165,10 +156,6 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 			uniqueCategories.add(category);
 			log.append(" "+category+"\n");
 		}
-<<<<<<< HEAD
-=======
-		log.append("\nThe different categories are...\n"+uniqueCategories);
->>>>>>> a9c854a789eb20a172cc6e8748a315de610f7f6c
 		System.out.println("Set is "+uniqueCategories);
 		log.append("Almost done!...\n");
 
