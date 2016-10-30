@@ -6,11 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +40,7 @@ import org.json.simple.parser.JSONParser;
 public class VisualRecognitionExample extends JPanel implements ActionListener {
 	
 	JButton openButton, sortButton;
-    JTextArea log;
+    static JTextArea log;
     JFileChooser fc;
 	private static File InputPath = null;
 	private static String FILE_SEPARATOR;
@@ -84,7 +82,6 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
             int returnVal = fc.showOpenDialog(VisualRecognitionExample.this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
             	InputPath = fc.getSelectedFile();
-                //This is where a real application would open the file.
                 log.setText("");
                 log.append("Load: " + InputPath.getAbsolutePath() + "\n");
             } 
@@ -97,14 +94,13 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
         } 
         if (e.getSource() == sortButton) {
         	if(InputPath != null) {
-        		log.append("Sorting: " + InputPath.getName() + "\n");
-        		//TODO BLUEMIX
+        		log.append("Sorting: " + InputPath.getName() + "...\n");
         		organizePictures();
-        		log.append("Done.");
         	}
         	else {
-        		log.append("Error: No directory loaded.");
+        		log.append("Error: No directory loaded.\n");
         	}
+    		log.append("\nDone.\n");
             log.setCaretPosition(log.getDocument().getLength());
         }
 	}
@@ -135,15 +131,13 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 		File input,output;
 		InputStream instream;
 		OutputStream outstream;
-		String source,dest;
-
+		log.append("\nRunning complex Image processing algorithims...\n");;
 		VisualRecognition service = new VisualRecognition(VisualRecognition.VERSION_DATE_2016_05_20);
 		service.setApiKey("9e3a667265d8ad82e2d01cf2502ede9727e74e96");
 
 		try(Stream<Path> paths = Files.walk(Paths.get(InputPath.getAbsolutePath()))) {
 		    paths.forEach(filePath -> {
 		        if (Files.isRegularFile(filePath)) {
-		            //System.out.println(filePath.toString());
 		            filePaths.add(filePath.toString());
 		        }
 		    });
@@ -151,7 +145,7 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 		catch(Exception e){
 			e.printStackTrace();
 		}
-
+		log.append("The different categories are...\n");
 		for(String path: filePaths){
 			ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
 					.images(new File(path)).build();
@@ -160,9 +154,11 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 			Image image = new Image(path, category);
 			imageCollection.add(image);
 			uniqueCategories.add(category);
+			log.append(" "+category+"\n");
 		}
-
 		System.out.println("Set is "+uniqueCategories);
+		log.append("Almost done!...\n");
+
 
 		Iterator<String> setIterator  = uniqueCategories.iterator();
 
@@ -181,7 +177,6 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 		    try {
 				instream = new FileInputStream(input);
 				outstream = new FileOutputStream(output);
-				//System.out.println(source+" "+dest);
 				while((length = instream.read(buffer)) > 0) {
 					outstream.write(buffer, 0, length);
 				}
@@ -195,18 +190,9 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 	
 	public static void main(String[] args) {	
 	    SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	                //Turn off metal's use of bold fonts
-	                UIManager.put("swing.boldMetal", Boolean.FALSE); 
-	                createAndShowGUI();
-	            }
-	        });
+            public void run() {
+                createAndShowGUI();
+            }
+        });
 	}	
 }
-
-
-
-
-
-
-
