@@ -45,6 +45,7 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
     JTextArea log;
     JFileChooser fc;
 	private static File InputPath = null;
+	private static String FILE_SEPARATOR;
 	   
     public VisualRecognitionExample() {
     	super(new BorderLayout());
@@ -96,9 +97,10 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
         } 
         if (e.getSource() == sortButton) {
         	if(InputPath != null) {
-        		log.append("Sorting: " + InputPath.getName() + ".\n");
+        		log.append("Sorting: " + InputPath.getName() + "\n");
         		//TODO BLUEMIX
         		organizePictures();
+        		log.append("Done.");
         	}
         	else {
         		log.append("Error: No directory loaded.");
@@ -108,6 +110,14 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 	}
 	
 	private static void createAndShowGUI() {
+		String os = System.getProperty("os.name");
+		System.out.println(os);
+		if(os.startsWith("Windows")) {
+			FILE_SEPARATOR = "\\";
+		}
+		else {
+			FILE_SEPARATOR = "/";
+		}
 		JFrame frame = new JFrame("HackNC");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(new VisualRecognitionExample());
@@ -116,18 +126,6 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
         frame.pack();
         frame.setVisible(true);
 	}
-    
-	public static void main(String[] args) {
-		
-	    SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	                //Turn off metal's use of bold fonts
-	                UIManager.put("swing.boldMetal", Boolean.FALSE); 
-	                createAndShowGUI();
-	            }
-	        });
-		
-	}	
 	
 	public static void organizePictures(){
 		ArrayList<String> filePaths = new ArrayList<String>();
@@ -158,7 +156,6 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 			ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
 					.images(new File(path)).build();
 			VisualClassification result = service.classify(options).execute();
-			//System.out.println(result);
 			String category = result.getImages().get(0).getClassifiers().get(0).getClasses().get(0).getName();
 			Image image = new Image(path, category);
 			imageCollection.add(image);
@@ -178,35 +175,33 @@ public class VisualRecognitionExample extends JPanel implements ActionListener {
 		byte[] buffer = new byte[1024];
 		int length;
 		for(Image img: imageCollection){
-		     input = new File(img.getPath());
-		     output = new File(InputPath+"\\"+img.getCategory());
-		     try {
+			Path p = Paths.get(img.getPath());
+		    input = new File(img.getPath());
+		    output = new File(InputPath+"\\"+img.getCategory()+"\\"+p.getFileName().toString());
+		    try {
 				instream = new FileInputStream(input);
 				outstream = new FileOutputStream(output);
-				 //System.out.println(source+" "+dest);
-				 while((length = instream.read(buffer)) > 0) {
-					 outstream.write(buffer, 0, length);
-				 }
-				 instream.close();
-				 outstream.close();
+				//System.out.println(source+" "+dest);
+				while((length = instream.read(buffer)) > 0) {
+					outstream.write(buffer, 0, length);
+				}
+				instream.close();
+				outstream.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-	
-			/*try {
-				input = new FileInputStream(source).getChannel();
-				output = new FileOutputStream(dest).getChannel();
-				System.out.println("test");
-				System.out.println(input.size());
-				outputChannel.transferFrom(input, 0, inputChannel.size());
-				inputChannel.close();
-				outputChannel.close();
-			} 
-			catch(Exception e){		
-				e.printStackTrace();
-			}*/		
 		}
 	}
+	
+	public static void main(String[] args) {	
+	    SwingUtilities.invokeLater(new Runnable() {
+	            public void run() {
+	                //Turn off metal's use of bold fonts
+	                UIManager.put("swing.boldMetal", Boolean.FALSE); 
+	                createAndShowGUI();
+	            }
+	        });
+	}	
 }
 
 
